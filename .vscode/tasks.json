@@ -1,0 +1,33 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+			"type": "shell",
+			"label": "ForwardCockroachDBPort",
+			"command": "kubectl",
+			"args": [
+				"port-forward",
+				"--namespace",
+				"cockroach-operator-system",
+				"service/cockroachdb",
+				"26257:26257"
+			],
+			"isBackground": true
+		},
+		{
+			"type": "shell",
+			"label": "ForwardRedisPort",
+			"command": "kubectl",
+			"args": [
+				"port-forward",
+				"--namespace",
+				"redis",
+				"svc/redis-master",
+				"6379:6379"
+			],
+			"isBackground": true
+		}
+    ]
+}
