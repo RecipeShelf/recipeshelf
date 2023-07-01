@@ -14,5 +14,3 @@ FROM gcr.io/distroless/static-debian11
 WORKDIR /
 
 COPY --from=golang /scraper .
-
-CMD [ "/scraper" ]

@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scraper
+  namespace: recipeshelf
+spec:
+  schedule: "*/5 * * * *" # At every 5th minute.
+  jobTemplate:    
+    spec:
+      template:
+        spec:
+          containers:
+          - name: scraper
+            image: recipeshelf/scraper
+            imagePullPolicy: Never # This uses the local image
+            envFrom:
+            - secretRef:
+                name: redis
+            env:
+            - name: redis-host
+              value: "redis:6379"
+            - name: import-queue
+              value: "urls-to-scrape"
+            - name: export-queue
+              value: "recipes-scraped"
+            - name: dead-letter-queue
+              value: "urls-to-scrape-dead"
+            command: ["/scraper"]
+          restartPolicy: Never

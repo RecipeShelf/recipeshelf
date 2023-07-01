@@ -36,11 +36,11 @@ var ErrorLog = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 var ctx = context.Background()
 
 var rdb = redis.NewClient(&redis.Options{
-	Addr:     "localhost:6379",
-	Password: os.Getenv("REDIS_PASSWORD"),
+	Addr:     os.Getenv("redis-host"),
+	Password: os.Getenv("redis-password"),
 	DB:       0,
 })
 
-var importQueue = os.Getenv("IMPORT_QUEUE")
-var exportQueue = os.Getenv("EXPORT_QUEUE")
-var deadLetterQueue = os.Getenv("DEAD_LETTER_QUEUE")
+var importQueue = os.Getenv("import-queue")
+var exportQueue = os.Getenv("export-queue")
+var deadLetterQueue = os.Getenv("dead-letter-queue")
