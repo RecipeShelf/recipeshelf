@@ -4,14 +4,22 @@ import (
 	"time"
 
 	recipePkg "github.com/kkyr/go-recipe/pkg/recipe"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
-	InfoLog.Println("Import Queue:", importQueue, "Export Queue:", exportQueue, "Dead Letter Queue:", deadLetterQueue)
+	importTimeout, err := time.ParseDuration(importQueueTimeout)
+	if err != nil {
+		ErrorLog.Fatal(err)
+	}
 
 	for {
-		result, err := rdb.BLPop(ctx, 0*time.Second, importQueue).Result()
-		if err != nil {
+		result, err := rdb.BLPop(ctx, importTimeout, importQueue).Result()
+		switch {
+		case err == redis.Nil:
+			InfoLog.Println("Nothing to scrape")
+			return
+		case err != nil:
 			ErrorLog.Fatal(err)
 		}
 
@@ -35,6 +43,7 @@ func main() {
 }
 
 func HandleScrapeError(url string, err error) {
-	rdb.RPush(ctx, deadLetterQueue, url)
-	WarningLog.Println(err)
+	WarningLog.Println("Skipped", url)
+	json, _ := MarshalErr(url, err)
+	rdb.RPush(ctx, deadLetterQueue, json)
 }

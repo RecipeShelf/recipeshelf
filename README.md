@@ -48,6 +48,7 @@ Scraper reads urls from the specified redis import queue and writes the scraped 
   redis-host=localhost:6379
   redis-password=[RedisPassword]  
   import-queue=urls-to-scrape  
+  import-queue-timeout=1s  
   export-queue=recipes-scraped  
   dead-letter-queue=urls-to-scrape-dead  
 - Running it in kubernetes  

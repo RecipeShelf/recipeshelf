@@ -29,6 +29,11 @@ type ScrapedRecipe struct {
 	Yields        string
 }
 
+type FailedScrape struct {
+	Url          string
+	ErrorMessage string
+}
+
 var WarningLog = log.New(os.Stderr, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 var InfoLog = log.New(os.Stderr, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 var ErrorLog = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
@@ -42,5 +47,6 @@ var rdb = redis.NewClient(&redis.Options{
 })
 
 var importQueue = os.Getenv("import-queue")
+var importQueueTimeout = os.Getenv("import-queue-timeout")
 var exportQueue = os.Getenv("export-queue")
 var deadLetterQueue = os.Getenv("dead-letter-queue")

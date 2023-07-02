@@ -5,8 +5,10 @@ metadata:
   namespace: recipeshelf
 spec:
   schedule: "*/5 * * * *" # At every 5th minute.
-  jobTemplate:    
+  concurrencyPolicy: Forbid
+  jobTemplate:
     spec:
+      backoffLimit: 0
       template:
         spec:
           containers:
@@ -18,9 +20,11 @@ spec:
                 name: redis
             env:
             - name: redis-host
-              value: "redis:6379"
+              value: "redis-master.redis:6379"
             - name: import-queue
               value: "urls-to-scrape"
+            - name: import-queue-timeout
+              value: "1s"
             - name: export-queue
               value: "recipes-scraped"
             - name: dead-letter-queue

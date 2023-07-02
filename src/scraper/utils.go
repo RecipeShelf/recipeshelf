@@ -71,10 +71,24 @@ func Marshal(url string, recipe recipe.Scraper) (string, error) {
 		scrapedRecipe.Yields = yields
 	}
 
-	recipeBytes, err := json.Marshal(scrapedRecipe)
+	bytes, err := json.Marshal(scrapedRecipe)
 	if err != nil {
 		return "", err
 	}
 
-	return string(recipeBytes), nil
+	return string(bytes), nil
+}
+
+func MarshalErr(url string, err error) (string, error) {
+	var failedScrape FailedScrape
+
+	failedScrape.ErrorMessage = err.Error()
+	failedScrape.Url = url
+
+	bytes, err := json.Marshal(failedScrape)
+	if err != nil {
+		return "", err
+	}
+
+	return string(bytes), nil
 }
