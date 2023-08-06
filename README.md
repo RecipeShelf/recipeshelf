@@ -3,20 +3,35 @@
 ## Kubernetes cluster
 Note: This is to get everything running in minikube locally
 
+
+
 ### Cockroach Database
 - Install [CochroackDB](https://www.cockroachlabs.com/docs/stable/orchestrate-a-local-cluster-with-kubernetes.html) in Kubernetes
 - Install the custom resource definition used by the cockroach operator  
-  `kubectl apply -f https://raw.githubusercontent.com/cockroachdb/cockroach-operator/v2.10.0/install/crds.yaml`
+  ```kubectl apply -f https://raw.githubusercontent.com/cockroachdb/cockroach-operator/v2.11.0/install/crds.yaml```
 - Install the operator  
-  `kubectl apply -f https://raw.githubusercontent.com/cockroachdb/cockroach-operator/v2.10.0/install/operator.yaml`
-- Initialize the cluster  
+  `kubectl apply -f https://raw.githubusercontent.com/cockroachdb/cockroach-operator/v2.11.0/install/operator.yaml`
+- Change your context to the cockroach operator system  
+  `kubectl config set-context --current --namespace=cockroach-operator-system`
+- Initialize the cluster    
   `kubectl apply -f crdbcluster.yaml`
-- Connect to the DB console  
-  `kubectl --namespace cockroach-operator-system exec -it cockroachdb-client-secure -- ./cockroach sql --certs-dir=/cockroach/cockroach-certs --host=cockroachdb-public`
-- Setup port forwarding for access from a sql GUI Tool  
-  `kubectl port-forward --namespace cockroach-operator-system service/cockroachdb 26257:26257`
+- Setup a pod running the cockroach client  
+  `kubectl create -f https://raw.githubusercontent.com/cockroachdb/cockroach-operator/v2.11.0/examples/client-secure-operator.yaml`
+- Connect to the cockroach client  
+  `kubectl exec -it cockroachdb-client-secure -- ./cockroach sql --certs-dir=/cockroach/cockroach-certs --host=cockroachdb-public`  
+  Run the following commands in the console to setup a user
+  - `CREATE USER [username] WITH PASSWORD '[password]'`  
+  - `GRANT admin TO [username]`
+  - `\q`  
+- [DB Console](https://localhost:8080) port forwarding  
+  `kubectl port-forward service/cockroachdb-public 8080`
+- Port forwarding for service acces from outside cluster  
+  `kubectl port-forward service/cockroachdb 26257:26257`
 
 ### Redis Cache
+- Create the redis namespace and set your context to it  
+  - `kubectl create namespace redis`
+  - `kubectl config set-context --current --namespace=redis`
 - Use helm to install [redis](https://bitnami.com/stack/redis/helm)
   `helm install redis oci://registry-1.docker.io/bitnamicharts/redis`
 - To get your password run  

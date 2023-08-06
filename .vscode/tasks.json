@@ -3,6 +3,19 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
+		{
+			"type": "shell",
+			"label": "ForwardCockroachAdminPort",
+			"command": "kubectl",
+			"args": [
+				"port-forward",
+				"--namespace",
+				"cockroach-operator-system",
+				"service/cockroachdb-public",
+				"8080"
+			],
+			"isBackground": true
+		},
         {
 			"type": "shell",
 			"label": "ForwardCockroachDBPort",
